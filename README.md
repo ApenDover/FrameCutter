@@ -11,6 +11,6 @@ at your Script must be three variables:
 - $2 = path to result folder
 - $3 = custom
 
-2. Run it and type the key: sh Script, path to hot folder, path to result folder, third variable;
+2. Run it and type the key: sh script, path to hot folder, path to result folder, third variable;
 
-while it work you can add a new files in hot folder for processing
+while it works you can add a new files in hot folder for processing
