@@ -1,32 +1,30 @@
+package folderMonitoring;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-public class FolderFilesCutter {
-    static final Logger logger = LoggerFactory.getLogger(FolderFilesCutter.class);
+public class FolderFilesPoolStarter {
+    static final Logger logger = LoggerFactory.getLogger(FolderFilesPoolStarter.class);
     private int it;
     private final File resultFolder;
-    private final String count;
+    private final int count;
     private final String sh;
     private ThreadPoolExecutor threadPoolExecutor;
     TreeSet<File> actualFiles = new TreeSet<>();
 
-    public FolderFilesCutter(String sh, File resultFolder, String count) {
+    public FolderFilesPoolStarter(String sh, File resultFolder, int count) {
         this.sh = sh;
         this.resultFolder = resultFolder;
         this.count = count;
-        int nThreads = Runtime.getRuntime().availableProcessors() + 1;
+//        int nThreads = Runtime.getRuntime().availableProcessors() + 1;
+        int nThreads = 5;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
         it = 0;
     }
@@ -48,8 +46,7 @@ public class FolderFilesCutter {
     }
 
     public void startCutItAll() {
-        logger.trace("Смотрю горячую папку " + ++it + "..");
-
+//        logger.trace("Смотрю горячую папку " + ++it + "..");
         TreeSet<File> treeSetOfFiles = HotFolderChecking.getTreeSetOfFiles();
         treeSetOfFiles.removeAll(actualFiles);
         logger.info("# " + ++it + " # НОВЫЕ ФАЙЛЫ: " + treeSetOfFiles.size());
@@ -61,16 +58,15 @@ public class FolderFilesCutter {
             if (file.isFile()) {
                 File fileResultFolder = new File(resultFolder.getAbsolutePath() + "/" + fileName);
                 if (!fileResultFolder.exists()) {
-                    logger.trace("Нашел новый файл: " + file.getName());
                     Thread thread = new Thread(() -> {
                         try {
                             fileResultFolder.mkdir();
-                            ShellRunner.run(sh, file.getAbsolutePath(), fileResultFolder.getAbsolutePath(), count);
+                            ShellRunner.run(sh, file.getAbsolutePath(), fileResultFolder.getAbsolutePath(), String.valueOf(count));
                         } catch (IOException | InterruptedException e) {
                             logger.error(e.getMessage() + " - " + Arrays.toString(e.getStackTrace()));
                         }
                     });
-                    logger.trace("Добавляю в очередь на обработку новый файл!");
+                    logger.trace("Добавляю в очередь на обработку: " + file.getName());
                     threadPoolExecutor.submit(thread);
                 }
             }

@@ -17,11 +17,11 @@
             <!-- daily rollover -->
             <fileNamePattern>videoCutterLog-%d{yyyy-MM-dd}.log</fileNamePattern>
 
-            <!-- Храним файлы логов 1 день -->
-            <maxHistory>1</maxHistory>
+            <!-- Храним файлы логов 100 дней -->
+            <maxHistory>100</maxHistory>
 
             <!-- Максимальный размер файлов лога 30 гигабайт -->
-            <totalSizeCap>1GB</totalSizeCap>
+            <totalSizeCap>2GB</totalSizeCap>
 
         </rollingPolicy>
         <encoder>
